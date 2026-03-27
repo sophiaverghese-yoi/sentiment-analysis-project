@@ -18,10 +18,11 @@ To help users quickly understand public opinion from text data.
 
 ---
 
-## Technologies Used
+## Tech Stack
 - Python
-- Pandas
-- Scikit-learn
+- Pandas (for data handling)
+- Scikit-learn (for machine learning)
+- Google Colab (for running code)
 
 ---
 
