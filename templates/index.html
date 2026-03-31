@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentiment Analyzer</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --bg-grad-1: #f7f9ff;
+            --bg-grad-2: #f3f6fc;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --danger: #b00020;
+            --success-bg: #eefbf3;
+            --success-border: #a7e3bb;
+            --input-bg: #ffffff;
+            --input-border: #d4d9e2;
+            --bar-bg: #dbe2f0;
+            --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+            --radius: 14px;
+        }
+        body.dark {
+            --bg: #0b1220;
+            --bg-grad-1: #0f172a;
+            --bg-grad-2: #111827;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-bg: #0f2a1b;
+            --success-border: #1f6f45;
+            --input-bg: #0f172a;
+            --input-border: #374151;
+            --bar-bg: #243042;
+            --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: linear-gradient(160deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+            color: var(--text);
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 760px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 1.7rem;
+        }
+
+        .subtitle {
+            margin: 0 0 20px;
+            color: var(--muted);
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 130px;
+            background: var(--input-bg);
+            color: var(--text);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 15px;
+            line-height: 1.45;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 12px;
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        .error {
+            color: var(--danger);
+            margin-top: 14px;
+            font-weight: 600;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+        }
+
+        .result-title {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 700;
+            margin-left: 6px;
+            text-transform: capitalize;
+        }
+        .emoji {
+            font-size: 1.15rem;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .confidence {
+            margin: 4px 0 10px;
+            color: #14532d;
+            font-weight: 600;
+        }
+        body.dark .confidence {
+            color: #86efac;
+        }
+
+        .scores-title {
+            margin: 12px 0 8px;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .score-row {
+            display: grid;
+            grid-template-columns: 90px 1fr 56px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+            text-transform: capitalize;
+        }
+
+        .bar {
+            height: 8px;
+            border-radius: 999px;
+            background: var(--bar-bg);
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #60a5fa, #2563eb);
+        }
+        .theme-toggle {
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            margin-top: 0;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+        .theme-toggle:hover {
+            background: var(--bg);
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <div class="top-row">
+            <h1>Simple Sentiment Analysis</h1>
+            <button type="button" id="theme-toggle" class="theme-toggle">Toggle Dark Mode</button>
+        </div>
+        <p class="subtitle">Enter text and get sentiment with confidence scores.</p>
+
+        <form method="post">
+            <label for="text">Your text</label>
+            <textarea id="text" name="text" placeholder="Type text here...">{{ text }}</textarea>
+            <button type="submit">Analyze Sentiment</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if sentiment %}
+            <section class="result">
+                <p class="result-title">
+                    Predicted sentiment:
+                    <span class="badge">{{ sentiment }}</span>
+                    <span class="emoji">
+                        {% if sentiment == "positive" %}😊{% elif sentiment == "neutral" %}😐{% elif sentiment == "negative" %}😡{% else %}🤔{% endif %}
+                    </span>
+                </p>
+                <p class="confidence">Confidence: {{ '%.2f'|format(confidence * 100) }}%</p>
+
+                <p class="scores-title">Class confidence breakdown</p>
+                {% for item in class_scores %}
+                    <div class="score-row">
+                        <span>{{ item.label }}</span>
+                        <div class="bar">
+                            <div class="bar-fill" style="width: {{ '%.2f'|format(item.score * 100) }}%;"></div>
+                        </div>
+                        <span>{{ '%.1f'|format(item.score * 100) }}%</span>
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    </main>
+    <script>
+        (function () {
+            const key = "theme";
+            const body = document.body;
+            const toggle = document.getElementById("theme-toggle");
+            const savedTheme = localStorage.getItem(key);
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark");
+            }
+
+            toggle.addEventListener("click", function () {
+                body.classList.toggle("dark");
+                localStorage.setItem(key, body.classList.contains("dark") ? "dark" : "light");
+            });
+        })();
+    </script>
+</body>
+</html>
